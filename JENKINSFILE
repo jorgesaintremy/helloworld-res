@@ -19,10 +19,8 @@ pipeline{
                 sh 'ls -lart'
             }
         }
-        stage('Tests'){
-            parallel{
-                stage('Unit'){
-                    agent{label 'agent1'}
+        stage('Unit'){
+                agent{label 'agent1'}
                     steps{
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                             unstash name: 'code'
@@ -36,8 +34,8 @@ pipeline{
                         }    
                     }
                 }
-                stage('Rest'){
-                    agent {label 'agent2'}
+            stage('Rest'){
+                agent {label 'agent2'}
                     steps{
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                             unstash name:'code'
@@ -60,8 +58,6 @@ pipeline{
                         deleteDir()
                     }
                 }
-            }
-        }
         stage('Results'){
             steps{
                 unstash name:'unit-res'
