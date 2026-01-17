@@ -72,6 +72,13 @@ pipeline{
                         deleteDir()
                     }
                 }
+            stage('Results'){
+                steps{
+                    unstash name:'unit-res'
+                    unstash name:'rest-res'
+                    junit 'result*.xml'
+                }
+            }
             stage('Cobertura'){
                 steps{
                     unstash name:'code'
@@ -86,15 +93,18 @@ pipeline{
                 recordCoverage qualityGates: [[criticality: 'ERROR', integerThreshold: 85, metric: 'LINE', threshold:85.0], [integerThreshold: 95, metric: 'LINE', threshold: 95.0], [criticality: 'ERROR', integerThreshold: 80, metric: 'BRANCH', threshold: 80.0],[integerThreshold: 90, metric: 'BRANCH', threshold: 90.0]], tools:[[parser: 'COBERTURA', pattern: 'coverage.xml']]
                 stash name: 'cobertura-res', includes: 'coverage.xml'
                 deleteDir()
+                }
             }
-        }
-        stage('Results'){
-            steps{
-                unstash name:'unit-res'
-                unstash name:'rest-res'
-                unstash name: 'cobertura-res'
-                junit 'result*.xml'
+            stage('Security'){
+                steps{
+                    unstash name:'code'
+                    sh '''
+                        python3 -m bandit --exit-zero -r . -f custom -o bandit.out --msg-template "{abspath}:{line}:[{test_id}] {msg}"
+                    '''
+                    recordIssues tools: [pyLint(name: 'Bandit', pattern: 'bandit.out')], qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true], [threshold: 2, type: 'TOTAL', unstable: false]]
+                    deleteDir()
+                }
             }
-        }
+
     }
 }
