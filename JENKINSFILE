@@ -115,6 +115,7 @@ pipeline{
                         /Users/kokomac/Documents/UNIR/Ejercicios/apache-jmeter-5.6.3/bin/jmeter -n -t test/jmeter/flask.jmx -l flask.jtl
                     '''
                 perfReport sourceDataFiles: 'flask.jtl'
+                deleteDir()
             }
         }
 
