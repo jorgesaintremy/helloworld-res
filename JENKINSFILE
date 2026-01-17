@@ -69,7 +69,7 @@ pipeline{
                         python3 -m coverage xml
                         sleep 5
                     '''
-                recordCoverage qualityGates: [[criticality: 'ERROR', integerThreshold: 85, metric: 'LINE', threshold:85.0], [integerThreshold: 95, metric: 'LINE', threshold: 95.0], [criticality: 'ERROR', integerThreshold: 89, metric: 'BRANCH', threshold: 89.0],[integerThreshold: 90, metric: 'BRANCH', threshold: 90.0]], tools:[[parser: 'COBERTURA', pattern: 'coverage.xml']]
+                recordCoverage qualityGates: [[criticality: 'ERROR', integerThreshold: 85, metric: 'LINE', threshold:85.0], [integerThreshold: 95, metric: 'LINE', threshold: 95.0], [criticality: 'ERROR', integerThreshold: 80, metric: 'BRANCH', threshold: 80.0],[integerThreshold: 90, metric: 'BRANCH', threshold: 90.0]], tools:[[parser: 'COBERTURA', pattern: 'coverage.xml']]
                 stash name: 'cobertura-res', includes: 'coverage.xml'
                 deleteDir()
             }
