@@ -49,7 +49,7 @@ pipeline{
                                 
                                 java -jar /Users/kokomac/Documents/Jenkins/agente2/wiremock/wiremock-standalone-3.13.2.jar --port 9090 --root-dir /Users/kokomac/Documents/Jenkins/agente2/wiremock &
                                 export PYTHONPATH=${WORKSPACE}
-                                sleep 15
+                                sleep 10
                                  
                                 python3 -m pytest --junitxml=result-rest.xml test/rest
                             '''
@@ -58,6 +58,20 @@ pipeline{
                         deleteDir()
                     }
                 }
+            stage('Cobertura'){
+                steps{
+                    unstash name:'code'
+                    sh '''
+                        ls-lart
+                        whoami
+                        export PYTHONPATH=${WORKSPACE}
+                        python3 -m coverage run --branch --source=app --omit=app/__init__.py,app/api.py -m pytest test/unit
+                        python3 -m coverage xml
+                        sleep 5
+                    '''
+                recordCoverage qualityGates: [[criticality: 'ERROR', integerThreshold: 85, metric: 'LINE', threshold:85.0], [integerThreshold: 95, metric: 'LINE', threshold: 95.0], [criticality: 'ERROR', integerThreshold: 89, metric: 'BRANCH', threshold: 89.0],[integerThreshold: 90, metric: 'BRANCH', threshold: 90.0]], tools:[[parser: 'COBERTURA', pattern: 'coverage.xml']]
+            }
+        }
         stage('Results'){
             steps{
                 unstash name:'unit-res'
