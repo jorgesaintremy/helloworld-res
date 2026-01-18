@@ -6,8 +6,7 @@ pipeline{
     stages{
         stage('Get Code'){
             steps{
-                git 'https://github.com/jorgesaintremy/helloworld-res.git' 
-                branch: 'feature_fix_coverage'
+                git 'https://github.com/jorgesaintremy/helloworld-res.git', branch: 'feature_fix_coverage'
                 echo WORKSPACE
                 sh 'ls -lart'
                 sh 'whoami'
