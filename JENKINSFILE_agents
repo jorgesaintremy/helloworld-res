@@ -67,6 +67,7 @@ pipeline{
                     steps{
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                         unstash name: 'code'
+                        echo WORKSPACE
                         sh '''
                             export PYTHONPATH=$WORKSPACE
                             python3 -m flake8 --format=pylint --exit-zero app>flake8.out
@@ -81,6 +82,7 @@ pipeline{
                     steps{
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                         unstash name:'code'
+                        echo WORKSPACE
                         sh '''
                             python3 -m bandit --exit-zero -r . -f custom -o bandit.out --msg-template "{abspath}:{line}:[{test_id}] {msg}"
                         '''
@@ -92,6 +94,7 @@ pipeline{
                 stage('Performance'){
                     steps{
                         unstash name:'code'
+                        echo WORKSPACE
                         sh '''
                             export FLASK_APP=app/api.py
                             python3 -m flask run &
@@ -106,6 +109,7 @@ pipeline{
                     steps{
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                         unstash name:'code'
+                        echo WORKSPACE
                         sh '''
                             ls -lart
                             whoami
