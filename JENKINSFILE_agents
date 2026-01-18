@@ -12,6 +12,7 @@ pipeline{
                 sh 'whoami'
                 sh 'hostname'
                 stash name: 'code', includes: '**'
+                deleteDir()
             }
         }
         stage('Tests'){
@@ -118,7 +119,7 @@ pipeline{
                     }
                 }
                 stage('Coverage'){
-                    agent any
+                    agent{label 'agent1'}
                     steps{
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                         unstash name:'code'
