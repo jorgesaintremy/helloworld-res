@@ -40,6 +40,7 @@ class TestCalculate(unittest.TestCase):
     def test_divide_method_fails_with_nan_parameter(self):
         self.assertRaises(TypeError, self.calc.divide, "2", 2)
         self.assertRaises(TypeError, self.calc.divide, 2, "2")
+        self.assertRaises(TypeError, self.calc.divide, "2", 0)
         self.assertRaises(TypeError, self.calc.divide, "2", "2")
 
     def test_multiply_method_returns_correct_result(self):
