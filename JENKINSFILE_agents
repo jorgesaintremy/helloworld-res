@@ -64,6 +64,7 @@ pipeline{
         stage('Tests2'){
             parallel{
                 stage('Static'){
+                    agent{label 'agent1'}
                     steps{
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                         unstash name: 'code'
@@ -79,6 +80,7 @@ pipeline{
                     }
                 }
                 stage('Security Test'){
+                    agent{label 'agent2'}
                     steps{
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                         unstash name:'code'
@@ -92,6 +94,7 @@ pipeline{
                     }
                 }
                 stage('Performance'){
+                    agent{label 'agent2'}
                     steps{
                         unstash name:'code'
                         echo WORKSPACE
@@ -106,6 +109,7 @@ pipeline{
                     }
                 }
                 stage('Coverage'){
+                    agent any
                     steps{
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                         unstash name:'code'
