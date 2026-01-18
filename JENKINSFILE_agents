@@ -28,6 +28,7 @@ pipeline{
                                 whoami
                                 hostname
                                 export PYTHONPATH=${WORKSPACE}
+                                cat test/unit/calc_test.py
                                 python3 -m pytest --junitxml=result-unit.xml test/unit
                             '''
                             stash name: 'unit-res', includes: 'result-unit.xml'
@@ -119,7 +120,7 @@ pipeline{
                     }
                 }
                 stage('Coverage'){
-                    agent{label 'agent1'}
+                    agent{label 'agent2'}
                     steps{
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                         unstash name:'code'
@@ -130,6 +131,7 @@ pipeline{
                             hostname
                             export PYTHONPATH=${WORKSPACE}
                             python3 -m coverage run --branch --source=app --omit=app/__init__.py,app/api.py -m pytest test/unit
+                            cat test/unit/calc_test.py
                             python3 -m coverage xml
                             sleep 5
                         '''
