@@ -70,6 +70,9 @@ pipeline{
                         unstash name: 'code'
                         echo WORKSPACE
                         sh '''
+                            ls -lart
+                            whoami
+                            hostname
                             export PYTHONPATH=$WORKSPACE
                             python3 -m flake8 --format=pylint --exit-zero app>flake8.out
                         '''
@@ -86,6 +89,9 @@ pipeline{
                         unstash name:'code'
                         echo WORKSPACE
                         sh '''
+                            ls -lart
+                            whoami
+                            hostname
                             python3 -m bandit --exit-zero -r . -f custom -o bandit.out --msg-template "{abspath}:{line}:[{test_id}] {msg}"
                         '''
                         recordIssues tools: [pyLint(name: 'Bandit', pattern: 'bandit.out')], qualityGates: [[threshold: 2, type: 'TOTAL', unstable: true], [threshold: 4, type: 'TOTAL', unstable: false]]
@@ -99,6 +105,9 @@ pipeline{
                         unstash name:'code'
                         echo WORKSPACE
                         sh '''
+                            ls -lart
+                            whoami
+                            hostname
                             export FLASK_APP=app/api.py
                             python3 -m flask run &
                             sleep 10
@@ -117,6 +126,7 @@ pipeline{
                         sh '''
                             ls -lart
                             whoami
+                            hostname
                             export PYTHONPATH=${WORKSPACE}
                             python3 -m coverage run --branch --source=app --omit=app/__init__.py,app/api.py -m pytest test/unit
                             python3 -m coverage xml
@@ -128,13 +138,6 @@ pipeline{
                         }
                     }
                 }
-            }
-        }
-        stage('Results'){
-            steps{
-                unstash name:'unit-res'
-                unstash name:'rest-res'
-                junit 'result*.xml'
             }
         }
     }
