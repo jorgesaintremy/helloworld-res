@@ -7,7 +7,7 @@ pipeline{
         stage('Get Code'){
             steps{
                 git 'https://github.com/jorgesaintremy/helloworld-res.git'
-                echo ${WORKSPACE}
+                echo WORKSPACE
                 sh 'ls -lart'
                 sh 'whoami'
                 sh 'hostname'
@@ -21,7 +21,7 @@ pipeline{
                     steps{
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                             unstash name: 'code'
-                            echo ${WORKSPACE}
+                            echo WORKSPACE
                             sh '''
                                 ls -lart
                                 whoami
@@ -40,7 +40,7 @@ pipeline{
                     steps{
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                             unstash name:'code'
-                            echo ${WORKSPACE}
+                            echo WORKSPACE
                             sh '''
                                 ls -lart
                                 whoami
