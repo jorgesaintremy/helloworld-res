@@ -23,6 +23,7 @@ pipeline{
                     python3 -m pytest --junitxml=result-unit.xml test/unit
                 '''
                 stash name: 'unit-res', includes: 'result-unit.xml'
+                junit 'result*.xml'
                 deleteDir()
                 }    
             }
@@ -44,6 +45,7 @@ pipeline{
                 '''
                 }
                 stash name: 'rest-res', includes: 'result-rest.xml'
+                junit 'result*.xml'
                 deleteDir()
             }
         }
