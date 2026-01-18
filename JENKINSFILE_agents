@@ -7,16 +7,11 @@ pipeline{
         stage('Get Code'){
             steps{
                 git 'https://github.com/jorgesaintremy/helloworld-res.git'
-                echo WORKSPACE
+                echo ${WORKSPACE}
                 sh 'ls -lart'
+                sh 'whoami'
+                sh 'hostname'
                 stash name: 'code', includes: '**'
-            }
-        }
-        stage('Build'){
-            steps{
-                echo 'Eyyy, esto es Python. No hay que compilar nada!!!'
-                echo WORKSPACE
-                sh 'ls -lart'
             }
         }
         stage('Tests'){
@@ -26,12 +21,16 @@ pipeline{
                     steps{
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                             unstash name: 'code'
+                            echo ${WORKSPACE}
                             sh '''
                                 ls -lart
+                                whoami
+                                hostname
                                 export PYTHONPATH=${WORKSPACE}
                                 python3 -m pytest --junitxml=result-unit.xml test/unit
                             '''
                             stash name: 'unit-res', includes: 'result-unit.xml'
+                            junit 'result*.xml'
                             deleteDir()
                         }    
                     }
@@ -41,22 +40,22 @@ pipeline{
                     steps{
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
                             unstash name:'code'
+                            echo ${WORKSPACE}
                             sh '''
                                 ls -lart
                                 whoami
+                                hostname
+                                export PYTHONPATH=${WORKSPACE}
                                 export FLASK_APP=app/api.py
-                                 
                                 python3 -m flask run &
                                 sleep 5
-                                
                                 java -jar /Users/kokomac/Documents/Jenkins/agente2/wiremock/wiremock-standalone-3.13.2.jar --port 9090 --root-dir /Users/kokomac/Documents/Jenkins/agente2/wiremock &
-                                export PYTHONPATH=${WORKSPACE}
                                 sleep 15
-                                 
                                 python3 -m pytest --junitxml=result-rest.xml test/rest
                             '''
                         }
                         stash name: 'rest-res', includes: 'result-rest.xml'
+                        junit 'result*.xml'
                         deleteDir()
                     }
                 }
